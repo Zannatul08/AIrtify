@@ -21,7 +21,7 @@ export default function TabLayout() {
       console.log(result.data.data);
 
       if (result.data.data.length !== 0) {
-        setUserDetail(result.data.data)
+        setUserDetail(result.data.data[0])
         return;
       }
 
@@ -31,7 +31,7 @@ export default function TabLayout() {
       };
       const createResult = await GlobalApi.CreateNewUser(data);
       console.log(createResult?.data?.data);
-      setUserDetail(result.data.data)
+      setUserDetail(result.data.data[0])
     } catch (e) {
       console.error('Error in VerifyUser:', e);
     }
