@@ -1,20 +1,22 @@
 import { useSSO, useUser } from '@clerk/clerk-expo';
+
 import * as Linking from 'expo-linking';
-import { Redirect } from 'expo-router'; // Import Redirect
+import { Redirect } from 'expo-router';
 import * as WebBrowser from 'expo-web-browser';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Colors from '../../constants/Colors';
 import { useWarmUpBrowser } from '../../utils/useWarmUpBrowser';
-import Colors from './../../constants/Colors';
 
 WebBrowser.maybeCompleteAuthSession();
 
 export default function IndexScreen() {
   useWarmUpBrowser();
   const { startSSOFlow } = useSSO();
-  const { user } = useUser(); // Get user state
+  const { user } = useUser();
 
-  // If user is signed in, redirect to home
+  // Redirect authenticated users to /tabs/home
   if (user) {
+    console.log('User already signed in, redirecting to /tabs/home');
     return <Redirect href="/(tabs)/home" />;
   }
 
@@ -26,13 +28,14 @@ export default function IndexScreen() {
         redirectUrl,
       });
       if (createdSessionId) {
-        await setActive({ session: createdSessionId }); // Sets session, triggers redirect
+        await setActive({ session: createdSessionId });
+        console.log('SSO successful, should redirect to /tabs/home');
       }
     } catch (err) {
       console.error('Google Login Error:', JSON.stringify(err, null, 2));
-      // Optionally handle the "session_exists" error specifically
       if (err.errors?.some(e => e.code === 'session_exists')) {
-        return <Redirect href="/(tabs)/home" />; // Redirect if already signed in
+        console.log('Session exists, redirecting to /tabs/home');
+        return <Redirect href="/(tabs)/home" />;
       }
     }
   };
