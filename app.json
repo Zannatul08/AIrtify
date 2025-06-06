@@ -18,6 +18,11 @@
       },
       "edgeToEdgeEnabled": true
     },
+
+     "extra": {
+      "clerkPublishableKey": "pk_test_dG9sZXJhbnQtbWFuYXRlZS0zNi5jbGVyay5hY2NvdW50cy5kZXYk"
+    },
+
     "web": {
       "bundler": "metro",
       "output": "static",
