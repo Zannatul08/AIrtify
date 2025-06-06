@@ -10,9 +10,13 @@ export default function RootLayout() {
       publishableKey={Constants.expoConfig?.extra?.clerkPublishableKey}
       tokenCache={tokenCache} // ✅ pass as object (not a function call)
     >
-      <Stack>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="login/index" options={{ headerShown: false }} />
+      <Stack screenOptions={{
+headerShown:false
+      }
+        
+      }>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="login/index"  />
       </Stack>
     </ClerkProvider>
   );

@@ -1,5 +1,6 @@
-import { useSSO } from '@clerk/clerk-expo';
-import * as AuthSession from 'expo-auth-session';
+import { useSSO, useUser } from '@clerk/clerk-expo';
+import * as Linking from 'expo-linking';
+import { Redirect } from 'expo-router'; // Import Redirect
 import * as WebBrowser from 'expo-web-browser';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useWarmUpBrowser } from '../../utils/useWarmUpBrowser';
@@ -8,23 +9,31 @@ import Colors from './../../constants/Colors';
 WebBrowser.maybeCompleteAuthSession();
 
 export default function IndexScreen() {
-  useWarmUpBrowser(); // 🔥 Warm up the browser for faster login
-  const { startSSOFlow } = useSSO(); // 🔐 Get the function to start login
+  useWarmUpBrowser();
+  const { startSSOFlow } = useSSO();
+  const { user } = useUser(); // Get user state
 
-  // ✅ Logic to handle login with Google
+  // If user is signed in, redirect to home
+  if (user) {
+    return <Redirect href="/(tabs)/home" />;
+  }
+
   const handleContinue = async () => {
     try {
-      const redirectUrl = AuthSession.makeRedirectUri(); // handles redirect correctly
+      const redirectUrl = Linking.createURL('/(tabs)/home', { scheme: 'airtify' });
       const { createdSessionId, setActive } = await startSSOFlow({
         strategy: 'oauth_google',
         redirectUrl,
       });
-
       if (createdSessionId) {
-        await setActive({ session: createdSessionId }); // 🎉 Set session on success
+        await setActive({ session: createdSessionId }); // Sets session, triggers redirect
       }
     } catch (err) {
       console.error('Google Login Error:', JSON.stringify(err, null, 2));
+      // Optionally handle the "session_exists" error specifically
+      if (err.errors?.some(e => e.code === 'session_exists')) {
+        return <Redirect href="/(tabs)/home" />; // Redirect if already signed in
+      }
     }
   };
 
@@ -37,16 +46,12 @@ export default function IndexScreen() {
           height: 600,
         }}
       />
-
       <View style={styles.loginContainer}>
         <Text style={styles.heading}>Welcome to AIrtify</Text>
         <Text style={styles.subtitle}>Create AI Art in Just one Click</Text>
-
-        {/* 🟢 Button with login logic connected */}
         <TouchableOpacity style={styles.button} onPress={handleContinue}>
           <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
-
         <Text style={styles.footerText}>
           By continuing you agree to our terms and conditions
         </Text>
