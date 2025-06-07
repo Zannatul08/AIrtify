@@ -1,5 +1,6 @@
 import { View } from 'react-native'
 import Header from '../../compNew/Home/Header'
+import Banner from '../../compNew/Home/Banner'
 
 export default function Home() {
   return (
@@ -10,6 +11,7 @@ export default function Home() {
    {/* header */}
    <Header/>
    {/* banner */}
+   <Banner/>
     </View>
   )
 }
