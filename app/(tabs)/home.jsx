@@ -1,6 +1,7 @@
 import { View } from 'react-native'
-import Header from '../../compNew/Home/Header'
+import AiFeaturedModel from '../../compNew/Home/AiFeaturedModel'
 import Banner from '../../compNew/Home/Banner'
+import Header from '../../compNew/Home/Header'
 
 export default function Home() {
   return (
@@ -12,6 +13,8 @@ export default function Home() {
    <Header/>
    {/* banner */}
    <Banner/>
+   {/* Featured List */}
+   <AiFeaturedModel/>
     </View>
   )
 }
