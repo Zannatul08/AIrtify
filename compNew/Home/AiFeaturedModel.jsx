@@ -37,7 +37,7 @@
 //                         width:35,
 //                         height:35,
 //                       }}
-                      
+
 //                       />
 //                       </View>
 //           </View>
@@ -153,6 +153,7 @@
 
 import { useEffect, useState } from 'react';
 import { FlatList, Image, Text, View } from 'react-native';
+import Colors from '../../constants/Colors';
 
 import GlobalApi from '../../services/GlobalApi';
 
@@ -171,6 +172,7 @@ export default function AiFeaturedModel() {
       console.log('Data to set:', result.data.data);
       const formattedData = result.data.data.map(item => ({
         icon: { url: item.icon.url }, // Use the direct icon.url
+        name: item.name,
       }));
       setAiModelList(formattedData);
       console.log('Formatted Data:', formattedData); // Debug the mapped data
@@ -182,19 +184,40 @@ export default function AiFeaturedModel() {
 
   return (
     <View style={{ marginTop: 20 }}>
-      <Text style={{ fontSize: 22, fontWeight: 'bold' }}>FEATURED</Text>
+      <Text style={{ fontSize: 18, fontWeight: 'bold' }}>FEATURED</Text>
       {aiModelList.length === 0 ? (
         <Text>Loading...</Text>
       ) : (
         <FlatList
           data={aiModelList}
+          numColumns={4}
+          style={{marginTop:7}}
           renderItem={({ item, index }) => (
-            <View style={{ margin: 10 }}>
-              <Image
-                source={{ uri: item?.icon?.url || 'https://via.placeholder.com/35' }}
-                style={{ width: 35, height: 35 }}
-                onError={(e) => console.log('Image failed to load:', e.nativeEvent.error)}
-              />
+            <View style={{
+              flex:1,
+              alignItems: 'center'
+          
+            }}>
+              <View style={{ 
+                margin: 10, 
+                padding: 9,
+                borderRadius: 7,
+                backgroundColor: Colors.LIGHT_GRAY
+                
+                }}>
+                <Image
+                  source={{ uri: item?.icon?.url || 'https://via.placeholder.com/35' }}
+                  style={{ width: 35, height: 35 }}
+                  onError={(e) => console.log('Image failed to load:', e.nativeEvent.error)}
+                />
+              </View>
+                <Text 
+                style={{
+                  fontSize:13,
+                  textAlign:'center',
+                  color: Colors.PRIMARY,
+                  marginTop:2
+                }}>{item?.name}</Text>
             </View>
           )}
           keyExtractor={(item, index) => index.toString()}
