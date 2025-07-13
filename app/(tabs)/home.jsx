@@ -1,20 +1,40 @@
-import { View } from 'react-native'
+import { FlatList, View } from 'react-native'
 import AiFeaturedModel from '../../compNew/Home/AiFeaturedModel'
+import AiModels from '../../compNew/Home/AiModels'
 import Banner from '../../compNew/Home/Banner'
 import Header from '../../compNew/Home/Header'
 
 export default function Home() {
   return (
-    <View style={{
-      padding:20,
-      marginTop:20
-    }}>
-   {/* header */}
-   <Header/>
-   {/* banner */}
-   <Banner/>
-   {/* Featured List */}
-   <AiFeaturedModel/>
-    </View>
+    <FlatList
+      data={[1]}
+
+      style={{
+        padding: 20,
+        marginTop: 20
+      }}
+      nestedScrollEnabled={true}
+      renderItem={({ item }) =>
+        <View>
+          {/* header */}
+          <Header />
+          {/* banner */}
+          <Banner />
+          {/* Featured List */}
+          <AiFeaturedModel />
+          {/* Ai Models (Avatar) */}
+          <AiModels type={'avatar'} />
+
+          {/* Ai Models (Style) */}
+          <AiModels type={'style'} />
+
+          <View style={{ height: 100 }}></View>
+        </View>
+
+      }
+
+    >
+</FlatList>
+  
   )
 }
