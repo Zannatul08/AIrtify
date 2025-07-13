@@ -152,13 +152,16 @@
 // }
 
 import { useEffect, useState } from 'react';
-import { FlatList, Image, Text, View } from 'react-native';
+import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import Colors from '../../constants/Colors';
 
+import { useRouter } from 'expo-router';
 import GlobalApi from '../../services/GlobalApi';
 
 export default function AiFeaturedModel() {
   const [aiModelList, setAiModelList] = useState([]);
+  const router=useRouter();
+
 
   useEffect(() => {
     GetAiModelFeaturedList();
@@ -182,6 +185,11 @@ export default function AiFeaturedModel() {
     }
   };
 
+  const OnClickAiModel=(item)=>{
+   router?.push('FormInput')
+  }
+
+
   return (
     <View style={{ marginTop: 20 }}>
       <Text style={{ fontSize: 18, fontWeight: 'bold' }}>FEATURED</Text>
@@ -193,7 +201,7 @@ export default function AiFeaturedModel() {
           numColumns={4}
           style={{marginTop:7}}
           renderItem={({ item, index }) => (
-            <View style={{
+            <TouchableOpacity onPress={()=>OnClickAiModel(item)} style={{
               flex:1,
               alignItems: 'center'
           
@@ -218,7 +226,7 @@ export default function AiFeaturedModel() {
                   color: Colors.PRIMARY,
                   marginTop:2
                 }}>{item?.name}</Text>
-            </View>
+            </TouchableOpacity>
           )}
           keyExtractor={(item, index) => index.toString()}
         />
