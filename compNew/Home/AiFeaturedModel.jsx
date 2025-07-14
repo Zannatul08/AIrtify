@@ -151,17 +151,103 @@
 //   );
 // }
 
+// import { useEffect, useState } from 'react';
+// import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
+// import Colors from '../../constants/Colors';
+
+// import { useRouter } from 'expo-router';
+// import GlobalApi from '../../services/GlobalApi';
+
+// export default function AiFeaturedModel() {
+//   const [aiModelList, setAiModelList] = useState([]);
+//   const router=useRouter();
+
+
+//   useEffect(() => {
+//     GetAiModelFeaturedList();
+//   }, []);
+
+//   const GetAiModelFeaturedList = async () => {
+//     try {
+//       console.log('Attempting API call to:', GlobalApi.GetFeaturedCategoryList);
+//       const result = await GlobalApi.GetFeaturedCategoryList();
+//       console.log('Raw API Response:', result.data);
+//       console.log('Data to set:', result.data.data);
+//       const formattedData = result.data.data.map(item => ({
+//         icon: { url: item.icon.url }, // Use the direct icon.url
+//         name: item.name,
+//       }));
+//       setAiModelList(formattedData);
+//       console.log('Formatted Data:', formattedData); // Debug the mapped data
+//     } catch (error) {
+//       console.error('Error fetching AI model featured list:', error.message);
+//       console.error('Full error object:', error);
+//     }
+//   };
+
+//   const OnClickAiModel=(item)=>{
+//    router?.push({
+//     pathname:'FormInput',
+//     params:item 
+//    })
+
+//   }
+
+
+//   return (
+//     <View style={{ marginTop: 20 }}>
+//       <Text style={{ fontSize: 18, fontWeight: 'bold' }}>FEATURED</Text>
+//       {aiModelList.length === 0 ? (
+//         <Text>Loading...</Text>
+//       ) : (
+//         <FlatList
+//           data={aiModelList}
+//           numColumns={4}
+//           style={{marginTop:7}}
+//           renderItem={({ item, index }) => (
+//             <TouchableOpacity onPress={()=>OnClickAiModel(item)} style={{
+//               flex:1,
+//               alignItems: 'center'
+          
+//             }}>
+//               <View style={{ 
+//                 margin: 10, 
+//                 padding: 9,
+//                 borderRadius: 7,
+//                 backgroundColor: Colors.LIGHT_GRAY
+                
+//                 }}>
+//                 <Image
+//                   source={{ uri: item?.icon?.url || 'https://via.placeholder.com/35' }}
+//                   style={{ width: 35, height: 35 }}
+//                   onError={(e) => console.log('Image failed to load:', e.nativeEvent.error)}
+//                 />
+//               </View>
+//                 <Text 
+//                 style={{
+//                   fontSize:13,
+//                   textAlign:'center',
+//                   color: Colors.PRIMARY,
+//                   marginTop:2
+//                 }}>{item?.name}</Text>
+//             </TouchableOpacity>
+//           )}
+//           keyExtractor={(item, index) => index.toString()}
+//         />
+//       )}
+//     </View>
+//   );
+// }
+
+import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import Colors from '../../constants/Colors';
-
-import { useRouter } from 'expo-router';
 import GlobalApi from '../../services/GlobalApi';
 
 export default function AiFeaturedModel() {
   const [aiModelList, setAiModelList] = useState([]);
-  const router=useRouter();
-
+  const router = useRouter();
 
   useEffect(() => {
     GetAiModelFeaturedList();
@@ -185,14 +271,17 @@ export default function AiFeaturedModel() {
     }
   };
 
-  const OnClickAiModel=(item)=>{
-   router?.push({
-    pathname:'FormInput',
-    params:item 
-   })
-
-  }
-
+  const OnClickAiModel = (item) => {
+    // Features that require ImageUploadComponent
+    const imageUploadFeatures = ["Upscale Image", "Mockup/Fine Tune", "Remove BG"];
+    const params = imageUploadFeatures.includes(item.name)
+      ? { ...item, userImageUpload: "true" }
+      : item;
+    router?.push({
+      pathname: 'FormInput',
+      params: params,
+    });
+  };
 
   return (
     <View style={{ marginTop: 20 }}>
@@ -203,33 +292,34 @@ export default function AiFeaturedModel() {
         <FlatList
           data={aiModelList}
           numColumns={4}
-          style={{marginTop:7}}
+          style={{ marginTop: 7 }}
           renderItem={({ item, index }) => (
-            <TouchableOpacity onPress={()=>OnClickAiModel(item)} style={{
-              flex:1,
-              alignItems: 'center'
-          
+            <TouchableOpacity onPress={() => OnClickAiModel(item)} style={{
+              flex: 1,
+              alignItems: 'center',
             }}>
               <View style={{ 
                 margin: 10, 
                 padding: 9,
                 borderRadius: 7,
-                backgroundColor: Colors.LIGHT_GRAY
-                
-                }}>
+                backgroundColor: Colors.LIGHT_GRAY,
+              }}>
                 <Image
                   source={{ uri: item?.icon?.url || 'https://via.placeholder.com/35' }}
                   style={{ width: 35, height: 35 }}
                   onError={(e) => console.log('Image failed to load:', e.nativeEvent.error)}
                 />
               </View>
-                <Text 
+              <Text 
                 style={{
-                  fontSize:13,
-                  textAlign:'center',
+                  fontSize: 13,
+                  textAlign: 'center',
                   color: Colors.PRIMARY,
-                  marginTop:2
-                }}>{item?.name}</Text>
+                  marginTop: 2,
+                }}
+              >
+                {item?.name}
+              </Text>
             </TouchableOpacity>
           )}
           keyExtractor={(item, index) => index.toString()}

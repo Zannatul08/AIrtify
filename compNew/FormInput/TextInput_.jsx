@@ -1,10 +1,28 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import { Text, TextInput, View } from 'react-native';
+import Colors from '../../constants/Colors';
 
-export default function TextInputComponent() {
+export default function TextInputComponent({userInputValue}) {
   return (
     <View>
-      <Text>TextInputComponent</Text>
+      <Text 
+      style={{
+        marginTop:10
+      }}
+      >Enter your prompt</Text>
+      <TextInput
+        placeholder= 'Enter your prompt here...'
+        numberOfLines={5}
+        multiline={true}
+        textAlignVertical='top'
+        onChangeText={(value)=>userInputValue(value)}
+        style={{
+          padding:15,
+          backgroundColor: Colors.LIGHT_GRAY,
+          borderRadius:15,
+          marginTop:10
+        }}
+        placeholderTextColor={Colors.GRAY || '#666'}
+      />
     </View>
-  )
+  );
 }

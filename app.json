@@ -18,11 +18,9 @@
       },
       "edgeToEdgeEnabled": true
     },
-
-     "extra": {
+    "extra": {
       "clerkPublishableKey": "pk_test_dG9sZXJhbnQtbWFuYXRlZS0zNi5jbGVyay5hY2NvdW50cy5kZXYk"
     },
-
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -30,6 +28,12 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ],
       [
         "expo-splash-screen",
         {
