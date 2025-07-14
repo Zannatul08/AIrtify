@@ -186,7 +186,11 @@ export default function AiFeaturedModel() {
   };
 
   const OnClickAiModel=(item)=>{
-   router?.push('FormInput')
+   router?.push({
+    pathname:'FormInput',
+    params:item 
+   })
+
   }
 
 

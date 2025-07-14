@@ -18,8 +18,12 @@ export default function AiModels({ type }) {
         setAiModelList(result.data.data);
     }
 
-const OnClickModel=()=>{
-router?.push('/FormInput')
+const OnClickModel=(item)=>{
+router?.push({
+    pathname:'/FormInput',
+    params:item 
+})
+
 }
 
     return (
@@ -37,7 +41,7 @@ router?.push('/FormInput')
                 showsHorizontalScrollIndicator={false}
                 nestedScrollEnabled={true}
                 renderItem={({ item, index }) => (
-                    <TouchableOpacity onPress={()=>OnClickModel()} style={{
+                    <TouchableOpacity onPress={()=>OnClickModel(item)} style={{
                         marginRight:15
                     }}>
                     <Image source={{uri:item?.banner?.url}}
