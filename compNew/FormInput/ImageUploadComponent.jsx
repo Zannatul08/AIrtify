@@ -44,12 +44,14 @@
 // }
 
 import * as ImagePicker from 'expo-image-picker';
+import { useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import Colors from '../../constants/Colors';
 
+
 export default function ImageUploadComponent({ uploadedImage}) {
   // const [image, setImage] = useState(null);
-
+ const [image,setImage]=useState();
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images', 'videos'],
@@ -63,6 +65,7 @@ export default function ImageUploadComponent({ uploadedImage}) {
     if (!result.canceled) {
       // setImage(result.assets[0].uri);
       uploadedImage(result.assets[0].uri)
+      setImage(result.assets[0].uri)
     }
   };
 
@@ -81,10 +84,23 @@ export default function ImageUploadComponent({ uploadedImage}) {
           alignItems: 'center',
         }}
       >
+
+        {image?
+      <Image source={{uri:image}}
+      style={{
+        width:'100%',
+        height:300,
+        borderRadius:15
+      }}
+      
+      />: 
+      
         <Image
           source={require('./../../assets/images/upload.png')}
-          style={{ width: 70, height: 70 }}
-        />
+          style={{ 
+            width: 70,
+            height: 70 }}
+        />}
       </TouchableOpacity>
     </View>
   );
