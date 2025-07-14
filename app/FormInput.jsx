@@ -24,7 +24,7 @@ export default function FormInput() {
       backgroundColor: Colors.WHITE,
       height:'100%'
     }}>
-      <Text>FormInput</Text>
+      <Text>{aiModel?.name}</Text>
     </View>
   )
 }
