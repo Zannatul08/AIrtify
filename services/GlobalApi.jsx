@@ -15,9 +15,12 @@ const GetFeaturedCategoryList=()=>axiosClient.get('/ai-models?filters[isFeatured
 
 const GetAiModels=(type)=>axiosClient.get('/ai-models?filters['+type+'][$eq]=true&populate=*') 
 
+const AIGenerateImage=(data)=>axios.post('http://192.168.0.103:8081/aimodel',data);
+
 export default {
   GetUserInfo,
   CreateNewUser,
   GetFeaturedCategoryList,
-  GetAiModels
+  GetAiModels,
+  AIGenerateImage
 };
