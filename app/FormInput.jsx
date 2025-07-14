@@ -1,8 +1,9 @@
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
+import ImageUploadComponent from '../compNew/FormInput/ImageUploadComponent';
+import TextInput_ from './../compNew/FormInput/TextInput_';
 import Colors from './../constants/Colors';
-
 export default function FormInput() {
   const params=useLocalSearchParams();
   const navigation=useNavigation();
@@ -30,6 +31,13 @@ export default function FormInput() {
         fontWeight:'bold'
       }}
       >{aiModel?.name}</Text>
+
+      <View>
+        {/*Text Input */}
+        <TextInput_/>
+        {/*Image Upload*/}
+        <ImageUploadComponent/>
+      </View>
     </View>
   )
 }
