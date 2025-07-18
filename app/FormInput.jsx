@@ -45,7 +45,7 @@
 //             marginVertical:5
 
 //           }}
-          
+
 //           >Note: 1 Credit will be used to generate AI image</Text>
 
 //           <TouchableOpacity style={{
@@ -54,7 +54,7 @@
 //             borderRadius:15,
 //             marginVertical:30,
 //             width:'100%',
-            
+
 
 //           }}>
 
@@ -241,20 +241,28 @@
 // }
 
 import { useLocalSearchParams, useNavigation } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { useContext, useEffect, useState } from 'react';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import ImageUploadComponent from '../compNew/FormInput/ImageUploadComponent';
 import TextInput_ from '../compNew/FormInput/TextInput_';
 import Colors from '../constants/Colors';
 import GlobalApi from '../services/GlobalApi';
+import { UserDetailContext } from './../context/UserDetailContext';
 
 export default function FormInput() {
   const params = useLocalSearchParams();
   const navigation = useNavigation();
   const [aiModel, setAiModel] = useState({});
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [userInput, setUserInput] = useState(''); // Fixed: Added initial value
-  const [userImage,setUserImage]=useState();
+  const [userImage, setUserImage] = useState();
+
+  const [loading, setLoading] = useState(false);
+
+  const [generatedImage, setGeneratedImage] = useState();
+
+  const { userDetail, setUserDetail } = useContext(UserDetailContext)
+
 
   useEffect(() => {
     console.log("Params:", params);
@@ -269,17 +277,48 @@ export default function FormInput() {
 
   if (loading) return <Text>Loading...</Text>;
 
-  const OnGenerate =async() => {
-    const data={
+  const OnGenerate = async () => {
 
-      aiModelName:aiModel?.aiModelName,
-      inputPrompt:userInput,
-      defaultPrompt:aiModel?.defaultPrompt
+    setLoading(true);
+
+    const data = {
+
+      aiModelName: aiModel?.aiModelName,
+      inputPrompt: userInput,
+      defaultPrompt: aiModel?.defaultPrompt
 
     }
 
-    const result = await GlobalApi.AIGenerateImage(data);
-    console.log(result);
+    try {
+
+
+      const result = await GlobalApi.AIGenerateImage(data);
+      const AIImage = result.data.result;
+      console.log("Image", result.data.result);
+
+      //To Update User Credits
+
+      const updatedResult = await GlobalApi.UpdateUserCredits(userDetail?.documentId, { credits: Number(userDetail?.credits) - 1 });
+
+      setUserDetail(updatedResult?.data.data);
+
+      //Save generated image URL
+      const SaveImageData = {
+
+        imageUrl: AIImage,
+        userEmail: userDetail?.userEmail
+
+      }
+      const SaveImageResult = await GlobalApi.AddAiImageRecord(SaveImageData);
+      console.log(SaveImageResult.data.data);
+      setLoading(false);
+    }
+    catch (e) {
+      setLoading(false);
+    }
+
+
+
   }
 
   return (
@@ -288,7 +327,7 @@ export default function FormInput() {
 
       <View>
         {aiModel?.userImageUpload === "true" ? (
-          <ImageUploadComponent  uploadedImage={(value)=>setUserImage(value)}/>
+          <ImageUploadComponent uploadedImage={(value) => setUserImage(value)} />
         ) : (
           <TextInput_ userInputValue={(value) => setUserInput(value)} />
         )}
@@ -298,6 +337,7 @@ export default function FormInput() {
 
         <TouchableOpacity
           onPress={() => OnGenerate()}
+          disabled={loading}
           style={{
             padding: 15,
             backgroundColor: Colors.PRIMARY,
@@ -306,9 +346,9 @@ export default function FormInput() {
             width: '100%',
           }}
         >
-          <Text style={{ textAlign: 'center', color: Colors.WHITE, fontSize: 20 }}>
+          {loading ? <ActivityIndicator size={'large'} color={'#fff'} /> : <Text style={{ textAlign: 'center', color: Colors.WHITE, fontSize: 20 }}>
             Generate
-          </Text>
+          </Text>}
         </TouchableOpacity>
       </View>
     </View>

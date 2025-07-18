@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: 'http://192.168.0.103:1337/api',
+  baseURL: 'http://192.168.0.100:1337/api',
   headers: {
     Authorization: `Bearer ${process.env.EXPO_PUBLIC_STRAPI_API_KEY}`,
   },
@@ -15,12 +15,18 @@ const GetFeaturedCategoryList=()=>axiosClient.get('/ai-models?filters[isFeatured
 
 const GetAiModels=(type)=>axiosClient.get('/ai-models?filters['+type+'][$eq]=true&populate=*') 
 
-const AIGenerateImage=(data)=>axios.post('http://192.168.0.103:8081/aimodel',data);
+const AIGenerateImage=(data)=>axios.post('http://192.168.0.100:8081/aimodel',data);
+
+const UpdateUserCredits=(documentId,data)=>axiosClient.put('/user-lists/'+documentId,{data:data})
+
+const AddAiImageRecord=(data)=>axiosClient.post('/ai-generated-images',{data:data});
 
 export default {
   GetUserInfo,
   CreateNewUser,
   GetFeaturedCategoryList,
   GetAiModels,
-  AIGenerateImage
+  AIGenerateImage,
+  UpdateUserCredits,
+  AddAiImageRecord
 };
