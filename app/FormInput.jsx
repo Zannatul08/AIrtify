@@ -240,7 +240,7 @@
 //   );
 // }
 
-import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import { useContext, useEffect, useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import ImageUploadComponent from '../compNew/FormInput/ImageUploadComponent';
@@ -248,6 +248,7 @@ import TextInput_ from '../compNew/FormInput/TextInput_';
 import Colors from '../constants/Colors';
 import GlobalApi from '../services/GlobalApi';
 import { UserDetailContext } from './../context/UserDetailContext';
+
 
 export default function FormInput() {
   const params = useLocalSearchParams();
@@ -260,6 +261,8 @@ export default function FormInput() {
   const [loading, setLoading] = useState(false);
 
   const [generatedImage, setGeneratedImage] = useState();
+
+  const router = useRouter();
 
   const { userDetail, setUserDetail } = useContext(UserDetailContext)
 
@@ -312,6 +315,14 @@ export default function FormInput() {
       const SaveImageResult = await GlobalApi.AddAiImageRecord(SaveImageData);
       console.log(SaveImageResult.data.data);
       setLoading(false);
+
+      router.push({
+        pathname: 'viewAiImage',
+        params:{
+          imageUrl: AIImage,
+          prompt: userInput
+        }
+      })
     }
     catch (e) {
       setLoading(false);
