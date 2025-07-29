@@ -79,6 +79,8 @@
 //         </View>
 //     )
 // } 
+
+//worked previously
 import { useEffect, useState } from 'react';
 import { FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 

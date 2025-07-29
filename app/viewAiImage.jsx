@@ -16,7 +16,9 @@ export default function ViewAiImage() {
     })
   return (
     <View style={{
-        padding:20
+        padding:20,
+        backgroundColor:Colors.WHITE,
+        height: '100%'
     }} >
         <Image source={{uri:params?.imageUrl}} style={{
             width:'100%',
