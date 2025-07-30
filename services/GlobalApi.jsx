@@ -21,6 +21,9 @@ const UpdateUserCredits=(documentId,data)=>axiosClient.put('/user-lists/'+docume
 
 const AddAiImageRecord=(data)=>axiosClient.post('/ai-generated-images',{data:data});
 
+const GetAllAiImages = (start, limit) =>
+  axiosClient.get(`/ai-generated-images?pagination[start]=${start}&pagination[limit]=${limit}&sort=createdAt:desc`);
+
 export default {
   GetUserInfo,
   CreateNewUser,
@@ -28,6 +31,7 @@ export default {
   GetAiModels,
   AIGenerateImage,
   UpdateUserCredits,
-  AddAiImageRecord
+  AddAiImageRecord,
+  GetAllAiImages
 };
 

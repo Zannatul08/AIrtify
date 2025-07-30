@@ -1,6 +1,7 @@
 import { FlatList, View } from 'react-native'
 import AiFeaturedModel from '../../compNew/Home/AiFeaturedModel'
 import AiModels from '../../compNew/Home/AiModels'
+import AllUsersCreation from '../../compNew/Home/AllUsersCreation'
 import Banner from '../../compNew/Home/Banner'
 import Header from '../../compNew/Home/Header'
 
@@ -27,6 +28,9 @@ export default function Home() {
 
           {/* Ai Models (Style) */}
           <AiModels type={'style'} />
+
+             {/* Users Creation */}
+             <AllUsersCreation/>
 
           <View style={{ height: 100 }}></View>
         </View>

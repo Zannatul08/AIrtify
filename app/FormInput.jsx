@@ -1005,6 +1005,389 @@
 //   );
 // }
 
+// import axios from 'axios';
+// import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
+// import { useContext, useEffect, useState } from 'react';
+// import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native';
+// import ImageUploadComponent from '../compNew/FormInput/ImageUploadComponent';
+// import TextInput_ from '../compNew/FormInput/TextInput_';
+// import Colors from '../constants/Colors';
+// import { UserDetailContext } from '../context/UserDetailContext';
+// import GlobalApi from '../services/GlobalApi';
+
+// export default function FormInput() {
+//   const params = useLocalSearchParams();
+//   const navigation = useNavigation();
+//   const [aiModel, setAiModel] = useState({});
+//   const [userInput, setUserInput] = useState('');
+//   const [userImage, setUserImage] = useState();
+//   const [loading, setLoading] = useState(false);
+//   const router = useRouter();
+//   const { userDetail, setUserDetail } = useContext(UserDetailContext);
+
+//   useEffect(() => {
+//     console.log('Params:', params);
+//     console.log('userImageUpload:', params?.userImageUpload, typeof params?.userImageUpload);
+//     setAiModel(params || {});
+//     navigation.setOptions({
+//       headerShown: true,
+//       headerTitle: params?.name || 'Generate',
+//     });
+//   }, []); // Empty dependency array to run once on mount, matching original behavior
+
+//   const showToast = (message) => {
+//     Alert.alert(
+//       'Notification',
+//       message,
+//       [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+//       { cancelable: false }
+//     );
+//   };
+
+//   const OnGenerate = async () => {
+//     if (userDetail.credits <= 0) {
+//       showToast('You do not have enough credits to generate an image.');
+//       return;
+//     }
+
+//     if (aiModel?.userImageUpload === 'true' && !userImage) {
+//       console.error('Error: No image provided for image-to-image generation');
+//       showToast('Please upload an image for image-to-image generation.');
+//       return;
+//     }
+//     if (aiModel?.userImageUpload !== 'true' && !userInput.trim()) {
+//       console.error('Error: No prompt provided for text-to-image generation');
+//       showToast('Please enter a prompt for text-to-image generation.');
+//       return;
+//     }
+
+//     setLoading(true);
+//     let data = {
+//       inputPrompt: userInput,
+//       defaultPrompt: aiModel?.defaultPrompt || 'High quality image',
+//     };
+
+//     const feature = params?.feature || aiModel?.feature || 'default'; // Corrected typo from original
+//     switch (feature) {
+//       case 'remove-bg':
+//         data.aiModelName = 'cjwbw/rembg:fb8af171cfa1616ddcf1242c093f9c46bcada5ad4cf6f2fbe8b81b330ec5c003';
+//         break;
+//       case 'upscale':
+//         data.aiModelName = 'nightmareai/real-esrgan:f121d640bd286e1fdc67f9799164c1d5be36ff74576ee11c803ae5b665dd46aa';
+//         data.scale = 2;
+//         break;
+//       case 'avatar':
+//       case 'true':
+//         data.aiModelName = 'bytedance/pulid:43d309c37ab4e62361e5e29b8e9e867fb2dcbcec77ae91206a8d95ac5dd451a0';
+//         data.prompt = userInput || aiModel?.defaultPrompt || 'portrait, impressionist painting, loose brushwork, vibrant color, light and shadow play';
+//         break;
+//       default:
+//         data.aiModelName = aiModel?.aiModelName || 'bytedance/sdxl-lightning-4step:6f7a773af6fc3e8de9d5a3c00be77c17308914bf67772726aff83496ba1e3bbe';
+//     }
+
+//     if (aiModel?.userImageUpload === 'true') {
+//       await ImageToAiImage(data);
+//     } else {
+//       await TextToImage(data);
+//     }
+//   };
+
+//   // const TextToImage = async (data) => {
+//   //   try {
+//   //     console.log('TextToImage data:', data);
+//   //     const result = await GlobalApi.AIGenerateImage(data);
+//   //     const AIImage = Array.isArray(result.data.result) ? result.data.result[0] : result.data.result;
+//   //     console.log('Generated Image URL:', AIImage);
+
+//   //     const updatedResult = await GlobalApi.UpdateUserCredits(userDetail?.documentId, {
+//   //       credits: Number(userDetail?.credits) - 1,
+//   //     });
+//   //     setUserDetail(updatedResult?.data.data);
+
+//   //     // const saveImageData = {
+//   //     //   imageUrl: AIImage,
+//   //     //   userEmail: userDetail?.userEmail,
+//   //     // };
+//   //     // const saveImageResult = await GlobalApi.AddAiImageRecord(saveImageData);
+//   //     // console.log('Saved Image Record:', saveImageResult.data.data);
+
+//   //     // router.push({
+//   //     //   pathname: 'viewAiImage',
+//   //     //   params: {
+//   //     //     imageUrl: AIImage,
+//   //     //     prompt: userInput,
+//   //     //   },
+//   //     // });
+
+
+//   //     UploadImageAndSave(AIImage);
+
+//   //   } catch (e) {
+//   //     console.error('TextToImage failed:', e);
+//   //     showToast('An error occurred while generating the image.');
+//   //   } finally {
+//   //     setLoading(false);
+//   //   }
+//   // };
+
+
+//   const TextToImage = async (data) => {
+//   try {
+//     console.log('TextToImage data:', data);
+//     const result = await GlobalApi.AIGenerateImage(data);
+//     const AIImage = Array.isArray(result.data.result) ? result.data.result[0] : result.data.result;
+//     console.log('Generated Image URL:', AIImage);
+
+//     const updatedResult = await GlobalApi.UpdateUserCredits(userDetail?.documentId, {
+//       credits: Number(userDetail?.credits) - 1,
+//     });
+//     console.log('Updated User Credits:', updatedResult.data);
+//     setUserDetail(updatedResult?.data.data);
+
+//     // Save the generated image URL directly to Strapi
+//     const saveImageData = {
+//       imageUrl: AIImage,
+//       userEmail: userDetail?.userEmail,
+//     };
+//     console.log('Saving Image Data:', saveImageData);
+//     const saveImageResult = await GlobalApi.AddAiImageRecord(saveImageData);
+//     console.log('Saved Image Record:', JSON.stringify(saveImageResult.data, null, 2));
+
+//     router.push({
+//       pathname: 'viewAiImage',
+//       params: {
+//         imageUrl: AIImage,
+//         prompt: userInput,
+//       },
+//     });
+//   } catch (e) {
+//     console.error('TextToImage failed:', e.message, e.stack);
+//     showToast('An error occurred while generating the image: ' + e.message);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+//   const ImageToAiImage = async (data) => {
+//   try {
+//     console.log('userImage before upload:', userImage);
+//     const formData = new FormData();
+//     formData.append('file', {
+//       uri: userImage,
+//       type: 'image/jpeg',
+//       name: 'upload.jpg',
+//     });
+//     formData.append('upload_preset', 'uzasy1rr');
+
+//     const response = await axios.post('https://api.cloudinary.com/v1_1/dud6rzpa2/upload', formData, {
+//       headers: { 'Content-Type': 'multipart/form-data' },
+//     });
+
+//     if (response.data.error) {
+//       throw new Error(response.data.error.message);
+//     }
+//     console.log('Cloudinary Uploaded Image URL:', response.data.secure_url);
+
+//     const imageData = {
+//       ...data,
+//       userImageUrl: response.data.secure_url,
+//     };
+//     console.log('ImageToAiImage data:', imageData);
+
+//     const result = await GlobalApi.AIGenerateImage(imageData);
+//     const AIImage = Array.isArray(result.data.result) ? result.data.result[0] : result.data.result;
+//     console.log('AI Generated Image:', AIImage);
+
+//     const updatedResult = await GlobalApi.UpdateUserCredits(userDetail?.documentId, {
+//       credits: Number(userDetail?.credits) - 1,
+//     });
+//     console.log('Updated User Credits:', updatedResult.data);
+//     setUserDetail(updatedResult?.data.data);
+
+//     const saveImageData = {
+//       imageUrl: AIImage,
+//       userEmail: userDetail?.userEmail,
+//     };
+//     console.log('Saving Image Data:', saveImageData);
+//     const saveImageResult = await GlobalApi.AddAiImageRecord(saveImageData);
+//     console.log('Saved Image Record:', JSON.stringify(saveImageResult.data, null, 2));
+
+//     router.push({
+//       pathname: 'viewAiImage',
+//       params: {
+//         imageUrl: AIImage,
+//         prompt: userInput || aiModel?.name,
+//       },
+//     });
+//   } catch (error) {
+//     console.error('ImageToAiImage failed:', error.message, error.stack);
+//     showToast('An error occurred while processing the image: ' + error.message);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+// //   const UploadImageAndSave = async(AIImage) => {
+
+// //    //Upload the Image to Cloudinary Storage
+// //   const formData = new FormData();
+// // formData.append('file', {
+// //   uri: AIImage,
+// //   type: 'image/jpeg',
+// //   name: 'upload.jpg',
+// // });
+// // formData.append('upload_preset', 'uzasy1rr');
+
+// // const response = await axios.post('https://api.cloudinary.com/v1_1/dud6rzpa2/upload', formData, {
+// //   headers: { 'Content-Type': 'multipart/form-data' },
+// // });
+
+// // if (response.data.error) {
+// //   throw new Error(response.data.error.message);
+// // }
+// //    //Save generated image URL
+// //     const saveImageData = {
+// //       imageUrl: response?.url,
+// //       userEmail: userDetail?.userEmail,
+// //     };
+// //     const saveImageResult = await GlobalApi.AddAiImageRecord(saveImageData);
+// //     console.log('Saved Image Record:', saveImageResult.data.data);
+
+// //     router.push({
+// //       pathname: 'viewAiImage',
+// //       params: {
+// //         imageUrl: AIImage,
+// //         prompt: userInput,
+// //       },
+// //     });
+// //   }
+
+// // const UploadImageAndSave = async (AIImage) => {
+// //   try {
+// //     // Upload the Image to Cloudinary Storage
+// //     const formData = new FormData();
+// //     formData.append('file', {
+// //       uri: AIImage, // Ensure AIImage is a valid local URI
+// //       type: 'image/jpeg',
+// //       name: 'upload.jpg',
+// //     });
+// //     formData.append('upload_preset', 'uzasy1rr');
+
+// //     const response = await axios.post('https://api.cloudinary.com/v1_1/dud6rzpa2/upload', formData, {
+// //       headers: { 'Content-Type': 'multipart/form-data' },
+// //     });
+
+// //     if (response.data.error) {
+// //       throw new Error(response.data.error.message);
+// //     }
+
+// //     // Save the generated image URL
+// //     const saveImageData = {
+// //       imageUrl: response.data.secure_url, // Use secure_url from Cloudinary response
+// //       userEmail: userDetail?.userEmail,
+// //     };
+// //     const saveImageResult = await GlobalApi.AddAiImageRecord(saveImageData);
+// //     console.log('Saved Image Record:', saveImageResult.data.data);
+
+// //     router.push({
+// //       pathname: 'viewAiImage',
+// //       params: {
+// //         imageUrl: AIImage,
+// //         prompt: userInput,
+// //       },
+// //     });
+// //   } catch (error) {
+// //     console.error('UploadImageAndSave failed:', error);
+// //     showToast('An error occurred while uploading the image to Cloudinary.');
+// //   }
+// // };
+// const UploadImageAndSave = async (AIImage) => {
+//   try {
+//     console.log('Attempting to upload AIImage to Cloudinary:', AIImage);
+//     // Since AIImage is a URL, we need to fetch it first
+//     const response = await axios.get(AIImage, { responseType: 'arraybuffer' });
+//     const buffer = Buffer.from(response.data, 'binary');
+
+//     const formData = new FormData();
+//     formData.append('file', {
+//       uri: `data:image/jpeg;base64,${buffer.toString('base64')}`,
+//       type: 'image/jpeg',
+//       name: 'upload.jpg',
+//     });
+//     formData.append('upload_preset', 'uzasy1rr');
+
+//     const uploadResponse = await axios.post('https://api.cloudinary.com/v1_1/dud6rzpa2/upload', formData, {
+//       headers: { 'Content-Type': 'multipart/form-data' },
+//     });
+
+//     if (uploadResponse.data.error) {
+//       throw new Error(uploadResponse.data.error.message);
+//     }
+//     console.log('Cloudinary Upload Response:', uploadResponse.data.secure_url);
+
+//     // Save the Cloudinary URL to Strapi
+//     const saveImageData = {
+//       imageUrl: uploadResponse.data.secure_url,
+//       userEmail: userDetail?.userEmail,
+//     };
+//     const saveImageResult = await GlobalApi.AddAiImageRecord(saveImageData);
+//     console.log('Saved Image Record:', saveImageResult.data);
+
+//     router.push({
+//       pathname: 'viewAiImage',
+//       params: {
+//         imageUrl: uploadResponse.data.secure_url,
+//         prompt: userInput,
+//       },
+//     });
+//   } catch (error) {
+//     console.error('UploadImageAndSave failed:', error.message, error.stack);
+//     showToast('An error occurred while uploading the image to Cloudinary: ' + error.message);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
+
+
+//   return (
+//     <View style={{ padding: 20, backgroundColor: Colors.WHITE, height: '100%' }}>
+//       <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{aiModel?.name}</Text>
+//       <View>
+//         {aiModel?.userImageUpload === 'true' ? (
+//           <ImageUploadComponent
+//             uploadedImage={(value) => {
+//               console.log('Received userImage:', value);
+//               setUserImage(value);
+//             }}
+//           />
+//         ) : (
+//           <TextInput_ userInputValue={(value) => setUserInput(value)} />
+//         )}
+//         <Text style={{ color: Colors.GRAY, marginVertical: 5 }}>
+//           Note: 1 Credit will be used to generate AI image
+//         </Text>
+//         <TouchableOpacity
+//           onPress={() => OnGenerate()}
+//           disabled={loading}
+//           style={{
+//             padding: 15,
+//             backgroundColor: Colors.PRIMARY,
+//             borderRadius: 15,
+//             marginVertical: 30,
+//             width: '100%',
+//           }}
+//         >
+//           {loading ? (
+//             <ActivityIndicator size={'large'} color={'#fff'} />
+//           ) : (
+//             <Text style={{ textAlign: 'center', color: Colors.WHITE, fontSize: 20 }}>Generate</Text>
+//           )}
+//         </TouchableOpacity>
+//       </View>
+//     </View>
+//   );
+// }
+
 import axios from 'axios';
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import { useContext, useEffect, useState } from 'react';
@@ -1033,7 +1416,7 @@ export default function FormInput() {
       headerShown: true,
       headerTitle: params?.name || 'Generate',
     });
-  }, []); // Empty dependency array to run once on mount, matching original behavior
+  }, []);
 
   const showToast = (message) => {
     Alert.alert(
@@ -1067,7 +1450,7 @@ export default function FormInput() {
       defaultPrompt: aiModel?.defaultPrompt || 'High quality image',
     };
 
-    const feature = params?.feature || aiModel?.feature || 'default'; // Corrected typo from original
+    const feature = params?.feature || aiModel?.feature || 'default';
     switch (feature) {
       case 'remove-bg':
         data.aiModelName = 'cjwbw/rembg:fb8af171cfa1616ddcf1242c093f9c46bcada5ad4cf6f2fbe8b81b330ec5c003';
@@ -1102,29 +1485,14 @@ export default function FormInput() {
       const updatedResult = await GlobalApi.UpdateUserCredits(userDetail?.documentId, {
         credits: Number(userDetail?.credits) - 1,
       });
+      console.log('Updated User Credits:', JSON.stringify(updatedResult.data, null, 2));
       setUserDetail(updatedResult?.data.data);
 
-      // const saveImageData = {
-      //   imageUrl: AIImage,
-      //   userEmail: userDetail?.userEmail,
-      // };
-      // const saveImageResult = await GlobalApi.AddAiImageRecord(saveImageData);
-      // console.log('Saved Image Record:', saveImageResult.data.data);
-
-      // router.push({
-      //   pathname: 'viewAiImage',
-      //   params: {
-      //     imageUrl: AIImage,
-      //     prompt: userInput,
-      //   },
-      // });
-
-
-      UploadImageAndSave(AIImage);
-
+      // Upload to Cloudinary and save to Strapi
+      await UploadImageAndSave(AIImage);
     } catch (e) {
-      console.error('TextToImage failed:', e);
-      showToast('An error occurred while generating the image.');
+      console.error('TextToImage failed:', e.message, e.stack);
+      showToast('An error occurred while generating the image: ' + e.message);
     } finally {
       setLoading(false);
     }
@@ -1148,13 +1516,14 @@ export default function FormInput() {
       if (response.data.error) {
         throw new Error(response.data.error.message);
       }
+      console.log('Cloudinary Uploaded Image URL:', response.data.secure_url);
 
       const imageData = {
         ...data,
         userImageUrl: response.data.secure_url,
       };
-
       console.log('ImageToAiImage data:', imageData);
+
       const result = await GlobalApi.AIGenerateImage(imageData);
       const AIImage = Array.isArray(result.data.result) ? result.data.result[0] : result.data.result;
       console.log('AI Generated Image:', AIImage);
@@ -1162,14 +1531,16 @@ export default function FormInput() {
       const updatedResult = await GlobalApi.UpdateUserCredits(userDetail?.documentId, {
         credits: Number(userDetail?.credits) - 1,
       });
+      console.log('Updated User Credits:', JSON.stringify(updatedResult.data, null, 2));
       setUserDetail(updatedResult?.data.data);
 
       const saveImageData = {
         imageUrl: AIImage,
         userEmail: userDetail?.userEmail,
       };
+      console.log('Saving Image Data:', saveImageData);
       const saveImageResult = await GlobalApi.AddAiImageRecord(saveImageData);
-      console.log('Saved Image Record:', saveImageResult.data.data);
+      console.log('Saved Image Record:', JSON.stringify(saveImageResult.data, null, 2));
 
       router.push({
         pathname: 'viewAiImage',
@@ -1179,90 +1550,50 @@ export default function FormInput() {
         },
       });
     } catch (error) {
-      console.error('ImageToAiImage failed:', error);
-      showToast('An error occurred while processing the image.');
+      console.error('ImageToAiImage failed:', error.message, error.stack);
+      showToast('An error occurred while processing the image: ' + error.message);
     } finally {
       setLoading(false);
     }
   };
 
+  const UploadImageAndSave = async (AIImage) => {
+    try {
+      console.log('Attempting to upload AIImage to Cloudinary:', AIImage);
+      // Upload the Replicate URL directly to Cloudinary
+      const formData = new FormData();
+      formData.append('file', AIImage); // Cloudinary accepts URLs directly
+      formData.append('upload_preset', 'uzasy1rr');
 
-//   const UploadImageAndSave = async(AIImage) => {
+      const uploadResponse = await axios.post('https://api.cloudinary.com/v1_1/dud6rzpa2/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
 
-//    //Upload the Image to Cloudinary Storage
-//   const formData = new FormData();
-// formData.append('file', {
-//   uri: AIImage,
-//   type: 'image/jpeg',
-//   name: 'upload.jpg',
-// });
-// formData.append('upload_preset', 'uzasy1rr');
+      if (uploadResponse.data.error) {
+        throw new Error(uploadResponse.data.error.message);
+      }
+      console.log('Cloudinary Upload Response:', uploadResponse.data.secure_url);
 
-// const response = await axios.post('https://api.cloudinary.com/v1_1/dud6rzpa2/upload', formData, {
-//   headers: { 'Content-Type': 'multipart/form-data' },
-// });
+      // Save the Cloudinary URL to Strapi
+      const saveImageData = {
+        imageUrl: uploadResponse.data.secure_url,
+        userEmail: userDetail?.userEmail,
+      };
+      const saveImageResult = await GlobalApi.AddAiImageRecord(saveImageData);
+      console.log('Saved Image Record:', JSON.stringify(saveImageResult.data, null, 2));
 
-// if (response.data.error) {
-//   throw new Error(response.data.error.message);
-// }
-//    //Save generated image URL
-//     const saveImageData = {
-//       imageUrl: response?.url,
-//       userEmail: userDetail?.userEmail,
-//     };
-//     const saveImageResult = await GlobalApi.AddAiImageRecord(saveImageData);
-//     console.log('Saved Image Record:', saveImageResult.data.data);
-
-//     router.push({
-//       pathname: 'viewAiImage',
-//       params: {
-//         imageUrl: AIImage,
-//         prompt: userInput,
-//       },
-//     });
-//   }
-
-const UploadImageAndSave = async (AIImage) => {
-  try {
-    // Upload the Image to Cloudinary Storage
-    const formData = new FormData();
-    formData.append('file', {
-      uri: AIImage, // Ensure AIImage is a valid local URI
-      type: 'image/jpeg',
-      name: 'upload.jpg',
-    });
-    formData.append('upload_preset', 'uzasy1rr');
-
-    const response = await axios.post('https://api.cloudinary.com/v1_1/dud6rzpa2/upload', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-
-    if (response.data.error) {
-      throw new Error(response.data.error.message);
+      router.push({
+        pathname: 'viewAiImage',
+        params: {
+          imageUrl: uploadResponse.data.secure_url,
+          prompt: userInput,
+        },
+      });
+    } catch (error) {
+      console.error('UploadImageAndSave failed:', error.message, error.stack);
+      showToast('An error occurred while uploading the image to Cloudinary: ' + error.message);
     }
-
-    // Save the generated image URL
-    const saveImageData = {
-      imageUrl: response.data.secure_url, // Use secure_url from Cloudinary response
-      userEmail: userDetail?.userEmail,
-    };
-    const saveImageResult = await GlobalApi.AddAiImageRecord(saveImageData);
-    console.log('Saved Image Record:', saveImageResult.data.data);
-
-    router.push({
-      pathname: 'viewAiImage',
-      params: {
-        imageUrl: AIImage,
-        prompt: userInput,
-      },
-    });
-  } catch (error) {
-    console.error('UploadImageAndSave failed:', error);
-    showToast('An error occurred while uploading the image to Cloudinary.');
-  }
-};
-
-
+  };
 
   return (
     <View style={{ padding: 20, backgroundColor: Colors.WHITE, height: '100%' }}>
