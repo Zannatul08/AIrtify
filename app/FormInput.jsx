@@ -1008,7 +1008,7 @@
 import axios from 'axios';
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import { useContext, useEffect, useState } from 'react';
-import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native';
 import ImageUploadComponent from '../compNew/FormInput/ImageUploadComponent';
 import TextInput_ from '../compNew/FormInput/TextInput_';
 import Colors from '../constants/Colors';
@@ -1033,15 +1033,31 @@ export default function FormInput() {
       headerShown: true,
       headerTitle: params?.name || 'Generate',
     });
-  }, []);
+  }, []); // Empty dependency array to run once on mount, matching original behavior
+
+  const showToast = (message) => {
+    Alert.alert(
+      'Notification',
+      message,
+      [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+      { cancelable: false }
+    );
+  };
 
   const OnGenerate = async () => {
+    if (userDetail.credits <= 0) {
+      showToast('You do not have enough credits to generate an image.');
+      return;
+    }
+
     if (aiModel?.userImageUpload === 'true' && !userImage) {
       console.error('Error: No image provided for image-to-image generation');
+      showToast('Please upload an image for image-to-image generation.');
       return;
     }
     if (aiModel?.userImageUpload !== 'true' && !userInput.trim()) {
       console.error('Error: No prompt provided for text-to-image generation');
+      showToast('Please enter a prompt for text-to-image generation.');
       return;
     }
 
@@ -1051,7 +1067,7 @@ export default function FormInput() {
       defaultPrompt: aiModel?.defaultPrompt || 'High quality image',
     };
 
-    const feature = params?.feature || aiModel?.avatar || 'default';
+    const feature = params?.feature || aiModel?.feature || 'default'; // Corrected typo from original
     switch (feature) {
       case 'remove-bg':
         data.aiModelName = 'cjwbw/rembg:fb8af171cfa1616ddcf1242c093f9c46bcada5ad4cf6f2fbe8b81b330ec5c003';
@@ -1104,6 +1120,7 @@ export default function FormInput() {
       });
     } catch (e) {
       console.error('TextToImage failed:', e);
+      showToast('An error occurred while generating the image.');
     } finally {
       setLoading(false);
     }
@@ -1159,6 +1176,7 @@ export default function FormInput() {
       });
     } catch (error) {
       console.error('ImageToAiImage failed:', error);
+      showToast('An error occurred while processing the image.');
     } finally {
       setLoading(false);
     }
