@@ -1104,20 +1104,24 @@ export default function FormInput() {
       });
       setUserDetail(updatedResult?.data.data);
 
-      const saveImageData = {
-        imageUrl: AIImage,
-        userEmail: userDetail?.userEmail,
-      };
-      const saveImageResult = await GlobalApi.AddAiImageRecord(saveImageData);
-      console.log('Saved Image Record:', saveImageResult.data.data);
+      // const saveImageData = {
+      //   imageUrl: AIImage,
+      //   userEmail: userDetail?.userEmail,
+      // };
+      // const saveImageResult = await GlobalApi.AddAiImageRecord(saveImageData);
+      // console.log('Saved Image Record:', saveImageResult.data.data);
 
-      router.push({
-        pathname: 'viewAiImage',
-        params: {
-          imageUrl: AIImage,
-          prompt: userInput,
-        },
-      });
+      // router.push({
+      //   pathname: 'viewAiImage',
+      //   params: {
+      //     imageUrl: AIImage,
+      //     prompt: userInput,
+      //   },
+      // });
+
+
+      UploadImageAndSave(AIImage);
+
     } catch (e) {
       console.error('TextToImage failed:', e);
       showToast('An error occurred while generating the image.');
@@ -1181,6 +1185,84 @@ export default function FormInput() {
       setLoading(false);
     }
   };
+
+
+//   const UploadImageAndSave = async(AIImage) => {
+
+//    //Upload the Image to Cloudinary Storage
+//   const formData = new FormData();
+// formData.append('file', {
+//   uri: AIImage,
+//   type: 'image/jpeg',
+//   name: 'upload.jpg',
+// });
+// formData.append('upload_preset', 'uzasy1rr');
+
+// const response = await axios.post('https://api.cloudinary.com/v1_1/dud6rzpa2/upload', formData, {
+//   headers: { 'Content-Type': 'multipart/form-data' },
+// });
+
+// if (response.data.error) {
+//   throw new Error(response.data.error.message);
+// }
+//    //Save generated image URL
+//     const saveImageData = {
+//       imageUrl: response?.url,
+//       userEmail: userDetail?.userEmail,
+//     };
+//     const saveImageResult = await GlobalApi.AddAiImageRecord(saveImageData);
+//     console.log('Saved Image Record:', saveImageResult.data.data);
+
+//     router.push({
+//       pathname: 'viewAiImage',
+//       params: {
+//         imageUrl: AIImage,
+//         prompt: userInput,
+//       },
+//     });
+//   }
+
+const UploadImageAndSave = async (AIImage) => {
+  try {
+    // Upload the Image to Cloudinary Storage
+    const formData = new FormData();
+    formData.append('file', {
+      uri: AIImage, // Ensure AIImage is a valid local URI
+      type: 'image/jpeg',
+      name: 'upload.jpg',
+    });
+    formData.append('upload_preset', 'uzasy1rr');
+
+    const response = await axios.post('https://api.cloudinary.com/v1_1/dud6rzpa2/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+
+    if (response.data.error) {
+      throw new Error(response.data.error.message);
+    }
+
+    // Save the generated image URL
+    const saveImageData = {
+      imageUrl: response.data.secure_url, // Use secure_url from Cloudinary response
+      userEmail: userDetail?.userEmail,
+    };
+    const saveImageResult = await GlobalApi.AddAiImageRecord(saveImageData);
+    console.log('Saved Image Record:', saveImageResult.data.data);
+
+    router.push({
+      pathname: 'viewAiImage',
+      params: {
+        imageUrl: AIImage,
+        prompt: userInput,
+      },
+    });
+  } catch (error) {
+    console.error('UploadImageAndSave failed:', error);
+    showToast('An error occurred while uploading the image to Cloudinary.');
+  }
+};
+
+
 
   return (
     <View style={{ padding: 20, backgroundColor: Colors.WHITE, height: '100%' }}>
