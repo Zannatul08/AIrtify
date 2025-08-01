@@ -475,7 +475,7 @@ export default function AiFeaturedModel() {
       'Mockup/Fine Tune': 'mockup', // Add other features as needed
       'Avatar Generator': 'avatar', // Example for avatar feature
     };
-    const imageUploadFeatures = ["Upscale Image", "Mockup/Fine Tune", "Remove BG", "Avatar Generator"];
+    const imageUploadFeatures = ["Upscale Image", "Remove BG", "Avatar Generator"];
     const params = imageUploadFeatures.includes(item.name)
       ? { ...item, userImageUpload: "true", feature: featureMap[item.name] || 'default' }
       : item;

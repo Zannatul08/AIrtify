@@ -1388,6 +1388,9 @@
 //   );
 // }
 
+
+
+//All features except mockup 
 import axios from 'axios';
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
 import { useContext, useEffect, useState } from 'react';
@@ -1633,3 +1636,5 @@ export default function FormInput() {
     </View>
   );
 }
+
+
