@@ -337,7 +337,7 @@ export default function ViewAiImage() {
       />
       <Text
         style={{
-          marginVertical: 10,
+          marginVertical: 15,
           fontSize: 16,
           color: Colors.PRIMARY,
         }}
@@ -348,8 +348,8 @@ export default function ViewAiImage() {
         style={{
           display: 'flex',
           flexDirection: 'row',
-          gap: 10,
-          marginTop: 50,
+          marginTop: 5,
+          justifyContent: 'center', // Centers horizontally
         }}
       >
         <TouchableOpacity
@@ -360,6 +360,7 @@ export default function ViewAiImage() {
             backgroundColor: loading ? Colors.GRAY : Colors.PRIMARY, // Gray out when loading
             borderRadius: 10,
             width: '50%',
+            
           }}
         >
           <Text
@@ -372,28 +373,11 @@ export default function ViewAiImage() {
             {loading ? 'Downloading...' : 'Download'}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            padding: 15,
-            backgroundColor: Colors.YELLOW,
-            borderRadius: 10,
-            width: '50%',
-          }}
-        >
-          <Text
-            style={{
-              color: Colors.WHITE,
-              textAlign: 'center',
-              fontSize: 18,
-            }}
-          >
-            Share
-          </Text>
-        </TouchableOpacity>
+       
       </View>
       <Text
         style={{
-          marginVertical: 10,
+          marginVertical: 20,
           fontSize: 15,
           color: Colors.GRAY,
         }}
