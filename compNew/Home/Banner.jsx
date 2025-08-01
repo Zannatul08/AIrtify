@@ -5,7 +5,7 @@ export default function Banner() {
         <View style={{
             marginTop: 20
         }}>
-            <Image source={require('./../../assets/images/banner.jpg')}
+            <Image source={require('./../../assets/images/bt4.jpg')}
                 style={{
                     width: '100%',
                     height: 230,
@@ -20,17 +20,17 @@ export default function Banner() {
                 <Text style={{
                     fontSize: 30,
                     fontWeight: 'bold',
-                    color: Colors.WHITE
+                    color: Colors.LIGHT_CYAN
                 }}>Turn words</Text>
                 <Text style={{
                     fontSize: 30,
                     fontWeight: 'bold',
-                    color: Colors.YELLOW
+                    color: Colors.LIGHT_CYAN
                 }}>into ART</Text>
             </View>
             <TouchableOpacity style={{
                 padding:7,
-                backgroundColor:Colors.YELLOW,
+                backgroundColor:Colors.LIGHT_CYAN,
                 position:'absolute',
                 bottom:0,
                 right:0,
