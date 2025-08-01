@@ -5,5 +5,6 @@ export default{
     WHITE: '#fff',
     LIGHT_GRAY: '#e6e6e6',
     LIGHT_CYAN: '#DDFEFF',
+    RANDOM: '#1de9bdff'
    
 }

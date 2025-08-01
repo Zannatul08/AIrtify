@@ -118,36 +118,51 @@ router?.push({
                 marginBottom: 10
             }}>{type?.toUpperCase()}</Text>
 
-            <FlatList
-                data={aiModelList}
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
-                nestedScrollEnabled={true}
-                renderItem={({ item, index }) => (
-                    <TouchableOpacity onPress={()=>OnClickModel(item)} style={{
-                        marginRight:15
-                    }}>
-                    <Image source={{uri:item?.banner?.url}}
-                    style={{
-                        width:140,
-                        height:180,
-                        borderRadius:15
-                    }}
-                    />
-                    <Text style={{
-                        position:'absolute',
-                        bottom:10,
-                        color:Colors.WHITE,
-                        width:'100%',
-                        textAlign: 'center',
-                        fontWeight:'medium',
-                        fontSize: 15
-                    }}>{item.name}</Text>
-                    </TouchableOpacity>
-
-                )}
-
-            />
+          <FlatList
+  data={aiModelList}
+  horizontal={true}
+  showsHorizontalScrollIndicator={false}
+  nestedScrollEnabled={true}
+  renderItem={({ item, index }) => (
+    <TouchableOpacity
+      onPress={() => OnClickModel(item)}
+      style={{
+        marginRight: 15,
+      }}
+    >
+      <Image
+        source={{ uri: item?.banner?.url }}
+        style={{
+          width: 140,
+          height: 180,
+          borderRadius: 15,
+        }}
+      />
+      <View
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          width: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black background
+          paddingVertical: 8,
+          borderBottomLeftRadius: 15,
+          borderBottomRightRadius: 15,
+        }}
+      >
+        <Text
+          style={{
+            color: Colors.WHITE,
+            textAlign: 'center',
+            fontWeight: 'medium',
+            fontSize: 15,
+          }}
+        >
+          {item.name}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  )}
+/>
         </View>
     )
 }
