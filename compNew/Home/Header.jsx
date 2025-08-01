@@ -3,6 +3,7 @@ import { useContext } from 'react'
 import { Image, Text, View } from 'react-native'
 import Colors from '../../constants/Colors'
 import { UserDetailContext } from '../../context/UserDetailContext'
+import SignOutButton from './../../app/components/SignOutButton'
 export default function Header() {
     const {user}=useUser()
     const {userDetail,setUserDetail}=useContext(UserDetailContext)
@@ -50,6 +51,7 @@ export default function Header() {
             height:40,
             borderRadius:99
         }}/>
+        <SignOutButton />
       </View>
     </View>
   )
