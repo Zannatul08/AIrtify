@@ -46,20 +46,20 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color="black" />,
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="collection"
         options={{
           title: 'Collection',
           tabBarIcon: ({ color }) => <Ionicons name="folder-open" size={24} color="black" />,
         }}
-      />
-      <Tabs.Screen
+      /> */}
+      {/* <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
           tabBarIcon: ({ color }) => <Ionicons name="people-circle" size={24} color="black" />,
         }}
-      />
+      /> */}
     </Tabs>
   );
 }
